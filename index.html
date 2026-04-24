@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>미슐랭 & 흑백요리사 | 한국 미식 레스토랑 가이드</title>
+  <meta name="description" content="한국 전국의 미슐랭 스타 레스토랑을 지도와 함께 검색하세요. 식당 이름, 대표 메뉴, 가격, 카테고리별 정보를 제공합니다." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── HEADER ─── -->
+  <header id="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-emblem">
+          <span class="emblem-star">✦</span>
+        </div>
+        <div class="logo-divider"></div>
+        <div>
+          <h1 class="logo-title">미슐랭 <span class="logo-amp">&</span> 흑백요리사</h1>
+          <p class="logo-sub">MICHELIN GUIDE · BLACK & WHITE CHEF KOREA</p>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <button class="nav-btn active" data-view="map" id="nav-map">🗺 지도</button>
+        <button class="nav-btn" data-view="list" id="nav-list">📋 목록</button>
+        <button class="nav-btn" data-view="stats" id="nav-stats">📊 통계</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ─── MAIN LAYOUT ─── -->
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+
+        <!-- Search -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="식당 이름, 메뉴, 지역 검색..." autocomplete="off" />
+          <button id="clear-search" class="clear-btn" title="초기화">✕</button>
+        </div>
+
+        <!-- Star Filter -->
+        <div class="filter-section">
+          <h3 class="filter-title">⭐ 스타 등급</h3>
+          <div class="star-filters">
+            <label class="star-label">
+              <input type="checkbox" class="star-check" value="3" checked />
+              <span class="star-badge star-3">★★★</span>
+              <span>3스타</span>
+            </label>
+            <label class="star-label">
+              <input type="checkbox" class="star-check" value="2" checked />
+              <span class="star-badge star-2">★★</span>
+              <span>2스타</span>
+            </label>
+            <label class="star-label">
+              <input type="checkbox" class="star-check" value="1" checked />
+              <span class="star-badge star-1">★</span>
+              <span>1스타</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-section">
+          <h3 class="filter-title">🍽 음식 카테고리</h3>
+          <div id="category-filters" class="category-filters"></div>
+        </div>
+
+        <!-- Region Filter -->
+        <div class="filter-section">
+          <h3 class="filter-title">📍 지역</h3>
+          <div id="region-filters" class="region-filters"></div>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="filter-section">
+          <h3 class="filter-title">💰 가격대 (1인)</h3>
+          <div class="price-range">
+            <input type="range" id="price-range" min="0" max="500000" step="10000" value="500000" />
+            <div class="price-labels">
+              <span>0원</span>
+              <span id="price-display">500,000원 이하</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 흑백요리사 필터 -->
+        <div class="filter-section">
+          <h3 class="filter-title bbr-title">🎬 흑백요리사</h3>
+          <div class="bbr-filters">
+            <label class="bbr-label">
+              <input type="checkbox" class="bbr-check" value="show" checked />
+              <span class="bbr-badge">흑백요리사 표시</span>
+            </label>
+            <div class="bbr-season-row">
+              <label class="season-label">
+                <input type="checkbox" class="season-check" value="1" checked />
+                <span class="season-chip s1">시즌 1</span>
+              </label>
+              <label class="season-label">
+                <input type="checkbox" class="season-check" value="2" checked />
+                <span class="season-chip s2">시즌 2</span>
+              </label>
+            </div>
+            <div class="bbr-tier-row">
+              <label class="tier-label">
+                <input type="checkbox" class="tier-check" value="백수저" checked />
+                <span class="tier-chip white">⚪ 백수저</span>
+              </label>
+              <label class="tier-label">
+                <input type="checkbox" class="tier-check" value="흑수저" checked />
+                <span class="tier-chip black">⚫ 흑수저</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result Count -->
+        <div class="result-count">
+          <span id="result-count-num">0</span>개 식당
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- MAP VIEW -->
+      <div id="view-map" class="view active">
+        <div id="map"></div>
+        <div class="map-legend">
+          <div class="legend-header">
+            <span style="font-size:16px;color:var(--burgundy)">✦</span>
+            <span class="legend-title">MICHELIN GUIDE</span>
+          </div>
+          <div class="legend-divider"></div>
+          <div class="legend-item"><span class="legend-dot dot-3"></span><span class="legend-stars">★★★</span> 3스타</div>
+          <div class="legend-item"><span class="legend-dot dot-2"></span><span class="legend-stars">★★</span> 2스타</div>
+          <div class="legend-item"><span class="legend-dot dot-1"></span><span class="legend-stars">★</span> 1스타</div>
+          <div class="legend-bbr-section">
+            <div class="legend-bbr-title">🎬 흑백요리사</div>
+            <div class="legend-item"><span class="legend-diamond d-s1w"></span> 시즌1 백수저</div>
+            <div class="legend-item"><span class="legend-diamond d-s1b"></span> 시즌1 흑수저</div>
+            <div class="legend-item"><span class="legend-diamond d-s2w"></span> 시즌2 백수저</div>
+            <div class="legend-item"><span class="legend-diamond d-s2b"></span> 시즌2 흑수저</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LIST VIEW -->
+      <div id="view-list" class="view">
+        <div class="list-header">
+          <h2>전체 레스토랑 목록</h2>
+          <div class="sort-controls">
+            <label>정렬:</label>
+            <select id="sort-select">
+              <option value="star-desc">스타 높은순</option>
+              <option value="star-asc">스타 낮은순</option>
+              <option value="price-asc">가격 낮은순</option>
+              <option value="price-desc">가격 높은순</option>
+              <option value="name">이름순</option>
+            </select>
+          </div>
+        </div>
+        <div id="restaurant-list" class="restaurant-grid"></div>
+      </div>
+
+      <!-- STATS VIEW -->
+      <div id="view-stats" class="view">
+        <div class="stats-container">
+          <h2 class="stats-title">통계 대시보드</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="stat-total">0</div>
+              <div class="stat-label">총 미슐랭 레스토랑</div>
+            </div>
+            <div class="stat-card gold">
+              <div class="stat-number" id="stat-3star">0</div>
+              <div class="stat-label">3스타</div>
+            </div>
+            <div class="stat-card silver">
+              <div class="stat-number" id="stat-2star">0</div>
+              <div class="stat-label">2스타</div>
+            </div>
+            <div class="stat-card bronze">
+              <div class="stat-number" id="stat-1star">0</div>
+              <div class="stat-label">1스타</div>
+            </div>
+          </div>
+          <div class="charts-row">
+            <div class="chart-box">
+              <h3>카테고리별 분포</h3>
+              <div id="category-chart" class="bar-chart"></div>
+            </div>
+            <div class="chart-box">
+              <h3>지역별 분포</h3>
+              <div id="region-chart" class="bar-chart"></div>
+            </div>
+          </div>
+          <div class="chart-box full">
+            <h3>가격대별 분포</h3>
+            <div id="price-chart" class="bar-chart"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- RESTAURANT MODAL -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal" id="restaurant-modal">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-header">
+        <div class="modal-star" id="modal-star"></div>
+        <h2 id="modal-name"></h2>
+        <p id="modal-category-region"></p>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <h4>📍 위치</h4>
+          <p id="modal-address"></p>
+        </div>
+        <div class="modal-section">
+          <h4>🍽 대표 메뉴</h4>
+          <div id="modal-menus" class="menu-list"></div>
+        </div>
+        <div class="modal-section">
+          <h4>💰 가격 (1인 기준)</h4>
+          <p id="modal-price" class="price-display"></p>
+        </div>
+        <div class="modal-section">
+          <h4>📝 소개</h4>
+          <p id="modal-desc"></p>
+        </div>
+        <div class="modal-section">
+          <h4>🕐 영업시간</h4>
+          <p id="modal-hours"></p>
+        </div>
+        <div class="modal-section">
+          <h4>📞 예약</h4>
+          <p id="modal-phone"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data.js"></script>
+  <script src="data_bbr.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
