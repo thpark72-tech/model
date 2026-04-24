@@ -12,13 +12,14 @@ let state = {
   sort: 'star-desc',
   filtered: [...RESTAURANTS],
   map: null,
-  markers: [],
-  bbrMarkers: [],
   currentView: 'map',
   bbrShow: true,
   bbrSeasons: new Set([1, 2]),
   bbrTiers: new Set(['백수저', '흑수저']),
   bakeryShow: true,
+  markers: [],
+  bbrMarkers: [],
+  bakeryMarkers: [],
   userPos: null,
   userMarker: null
 };
@@ -85,13 +86,11 @@ function getBbrClass(r) {
 }
 
 function updateBbrMarkers() {
-  state.bbrMarkers.forEach(m => m.marker.remove());
+  if (state.bbrMarkers) state.bbrMarkers.forEach(m => m.marker.remove());
   state.bbrMarkers = [];
-  if (!state.bbrShow) return;
-
-  BBR_RESTAURANTS.forEach(r => {
-    if (!state.bbrSeasons.has(r.season)) return;
-    if (!state.bbrTiers.has(r.tier)) return;
+  
+  state.filtered.forEach(r => {
+    if (r.type !== 'bbr') return;
     const cls = getBbrClass(r);
     const icon_html = `<div class="bbr-map-label ${cls}"><span class="bbr-name">${r.name}</span></div>`;
     const w = Math.max(r.name.length * 13 + 30, 70);
@@ -153,10 +152,11 @@ function openBbrModal(id) {
 }
 
 function updateMarkers() {
-  state.markers.forEach(m => m.marker.remove());
+  if (state.markers) state.markers.forEach(m => m.marker.remove());
   state.markers = [];
 
   state.filtered.forEach(r => {
+    if (r.type !== 'michelin') return;
     const starStr = '★'.repeat(r.stars);
     const colorClass = `mlabel-${r.stars}`;
     // Pill label: [★★★] 가온
@@ -187,9 +187,9 @@ function updateMarkers() {
 function updateBakeryMarkers() {
   if (state.bakeryMarkers) state.bakeryMarkers.forEach(m => m.marker.remove());
   state.bakeryMarkers = [];
-  if (!state.bakeryShow) return;
 
-  BAKERY_DATA.forEach(r => {
+  state.filtered.forEach(r => {
+    if (r.type !== 'bakery') return;
     const icon_html = `<div class="bakery-map-label"><span class="bakery-emoji">🥐</span><span class="bakery-name">${r.name}</span></div>`;
     const w = Math.max(r.name.length * 13 + 45, 90);
     const icon = L.divIcon({ className:'', html: icon_html, iconSize:[w,26], iconAnchor:[w/2,13], popupAnchor:[0,-16] });
