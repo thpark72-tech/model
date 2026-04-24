@@ -271,5 +271,74 @@ const BBR_RESTAURANTS = [
     priceMin: 5000, priceMax: 15000,
     desc: "줄 서서 먹는 떡볶이 명인의 분식집. 진하고 깊은 고추장 양념이 특징.",
     hours: "11:00-20:00", phone: "02-000-0000"
+  },
+
+  // ══════════════════════════════════════
+  // 지방 주요 식당 (Regional Highlights)
+  // ══════════════════════════════════════
+  {
+    id: "reg01", name: "미트컬쳐 (Meet Culture)", season: 1, tier: "백수저", chef: "조은주 (청와대 셰프)", category: "유러피안", region: "강릉",
+    address: "강원 강릉시 경강로 2629", lat: 37.7725, lng: 128.9185,
+    menus: [{ name: "스테이크", price: 45000 }, { name: "피쉬앤칩스", price: 22000 }],
+    priceMin: 20000, priceMax: 80000,
+    desc: "강릉에서 만나는 청와대 셰프의 유러피안 퀴진. 신선한 현지 식재료를 사용.",
+    hours: "11:30-21:00 (B.T 15:00-17:30)", phone: "033-644-2629"
+  },
+  {
+    id: "reg02", name: "모리노아루요", season: 1, tier: "백수저", chef: "김승민", category: "일식/덮밥", region: "제주",
+    address: "제주 제주시 애월읍 하소로 769-58", lat: 33.4285, lng: 126.3985,
+    menus: [{ name: "카이센동", price: 25000 }, { name: "메로동", price: 18000 }],
+    priceMin: 15000, priceMax: 35000,
+    desc: "마스터셰프 코리아 시즌1 우승자 김승민 셰프의 덮밥 전문점. 숲속 고즈넉한 분위기.",
+    hours: "11:30-20:00 (일요일 휴무)", phone: "064-799-4253"
+  },
+  {
+    id: "reg03", name: "전주비빔소리", season: 1, tier: "흑수저", chef: "유비빔 (비빔대왕)", category: "한식", region: "전주",
+    address: "전북 전주시 덕진구 건지산로 53-3", lat: 35.8455, lng: 127.1355,
+    menus: [{ name: "비빔밥", price: 12000 }, { name: "청국장", price: 10000 }],
+    priceMin: 10000, priceMax: 30000,
+    desc: "비빔에 인생을 건 비빔대왕 유비빔 셰프의 식당. 비빔 박자에 맞춰 비벼 먹는 재미.",
+    hours: "09:00-21:00", phone: "063-245-0000"
+  },
+  {
+    id: "reg04", name: "태화장", season: 1, tier: "흑수저", chef: "박지영 (중식 마녀)", category: "중식", region: "대전",
+    address: "대전 동구 중앙로203번길 78", lat: 36.3335, lng: 127.4335,
+    menus: [{ name: "난자완스", price: 35000 }, { name: "탕수육", price: 25000 }],
+    priceMin: 15000, priceMax: 60000,
+    desc: "대전에서 가장 오래된 중식당 중 하나. 박지영 셰프의 내공이 담긴 요리들.",
+    hours: "11:00-21:00", phone: "042-256-1091"
+  },
+  {
+    id: "reg05", name: "친밀 제주", season: 1, tier: "백수저", chef: "오세득", category: "양식", region: "제주",
+    address: "제주 제주시 애월읍 유수암로 12", lat: 33.4335, lng: 126.4175,
+    menus: [{ name: "파스타", price: 24000 }, { name: "버거", price: 18000 }],
+    priceMin: 18000, priceMax: 50000,
+    desc: "오세득 셰프의 제주 다이닝. 제주 식재료를 활용한 감각적인 서양 요리.",
+    hours: "11:00-20:00", phone: "064-000-0000"
+  },
+  {
+    id: "reg06", name: "엄마밥상", season: 1, tier: "흑수저", chef: "천만백반", category: "한식", region: "경북",
+    address: "경북 칠곡군 동명면 한티로 594", lat: 36.0125, lng: 128.5715,
+    menus: [{ name: "엄마밥상 정식", price: 15000 }],
+    priceMin: 15000, priceMax: 15000,
+    desc: "천만 번 차린 백반의 내공. 정성 가득한 한식 밥상을 만날 수 있는 곳.",
+    hours: "11:00-20:00", phone: "054-000-0000"
+  },
+  {
+    id: "reg07", name: "천향", season: 1, tier: "흑수저", chef: "김동현 (부채도사)", category: "중식", region: "경기",
+    address: "경기 성남시 분당구 판교역로 231", lat: 37.4015, lng: 127.1115,
+    menus: [{ name: "코스 요리", price: 55000 }, { name: "자장면", price: 10000 }],
+    priceMin: 10000, priceMax: 100000,
+    desc: "판교의 유명한 프리미엄 중식당. 부채도사 셰프의 화려한 중식 스킬.",
+    hours: "11:30-22:00", phone: "031-8016-8100"
+  },
+  {
+    id: "reg08", name: "최씨네피자", season: 1, tier: "흑수저", chef: "월클 레시피", category: "양식/피자", region: "대구",
+    address: "대구 중구 국채보상로 635-1", lat: 35.8715, lng: 128.6015,
+    menus: [{ name: "월클 피자", price: 25000 }],
+    priceMin: 20000, priceMax: 40000,
+    desc: "대구에서 즐기는 월드클래스 레시피 피자. 독특한 토핑이 매력적.",
+    hours: "12:00-22:00", phone: "053-000-0000"
   }
 ];
+
