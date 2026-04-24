@@ -738,3 +738,47 @@ input, select { font-family:inherit; }
 .btn-nav:hover {
   filter: brightness(1.1);
 }
+
+/* ── BAKERY STYLES ── */
+.bakery-map-label {
+  background: #fff;
+  border: 2px solid #8d5524;
+  border-radius: 20px;
+  padding: 2px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  white-space: nowrap;
+}
+.bakery-emoji { font-size: 14px; }
+.bakery-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #8d5524;
+}
+
+.bakery-card {
+  border: 1.5px solid #8d5524;
+  background: #fff9f5;
+}
+.bakery-card:hover {
+  box-shadow: 0 8px 24px rgba(141, 85, 36, 0.15);
+}
+.bakery-badge-chip {
+  background: #8d5524;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.bakery-card .card-name {
+  color: #5d3a1a;
+}
+
+.legend-bakery {
+  font-size: 18px;
+  margin-right: 4px;
+}

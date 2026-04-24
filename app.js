@@ -18,6 +18,7 @@ let state = {
   bbrShow: true,
   bbrSeasons: new Set([1, 2]),
   bbrTiers: new Set(['백수저', '흑수저']),
+  bakeryShow: true,
   userPos: null,
   userMarker: null
 };
@@ -182,6 +183,61 @@ function updateMarkers() {
   });
 }
 
+// ── Bakery Map ──────────────────────────────────
+function updateBakeryMarkers() {
+  if (state.bakeryMarkers) state.bakeryMarkers.forEach(m => m.marker.remove());
+  state.bakeryMarkers = [];
+  if (!state.bakeryShow) return;
+
+  BAKERY_DATA.forEach(r => {
+    const icon_html = `<div class="bakery-map-label"><span class="bakery-emoji">🥐</span><span class="bakery-name">${r.name}</span></div>`;
+    const w = Math.max(r.name.length * 13 + 45, 90);
+    const icon = L.divIcon({ className:'', html: icon_html, iconSize:[w,26], iconAnchor:[w/2,13], popupAnchor:[0,-16] });
+    const marker = L.marker([r.lat, r.lng], { icon })
+      .addTo(state.map)
+      .bindPopup(buildBakeryPopup(r), { maxWidth: 260 });
+    state.bakeryMarkers.push({ id: r.id, marker });
+  });
+}
+
+function buildBakeryPopup(r) {
+  return `<div class="popup-card">
+    <div class="popup-star-row">
+      <span style="font-size:0.75rem;background:#8d5524;color:#fff;padding:2px 8px;border-radius:8px;font-weight:700">천하제빵</span>
+      <span class="popup-category">${r.category}</span>
+    </div>
+    <div class="popup-name">${r.name}</div>
+    <div style="font-size:0.78rem;color:#888;margin-bottom:4px">👨‍🍳 ${r.chef} 셰프</div>
+    <div class="popup-region">📍 ${r.region} · ${r.address.split(' ').slice(0,3).join(' ')}</div>
+    <div style="display:flex;gap:6px">
+      <button class="popup-btn" style="flex:1" onclick="openBakeryModal('${r.id}')">상세 보기</button>
+      <button class="popup-btn btn-nav" style="flex:1;background:var(--gold)" onclick="goToNaver('${r.name}', ${r.lat}, ${r.lng})">길찾기</button>
+    </div>
+  </div>`;
+}
+
+function openBakeryModal(id) {
+  const r = BAKERY_DATA.find(x => x.id === id);
+  if (!r) return;
+  const priceStr = `${r.priceMin.toLocaleString()}원 ~ ${r.priceMax.toLocaleString()}원`;
+  document.getElementById('modal-star').textContent = `🥐 천하제빵`;
+  document.getElementById('modal-star').style.color = '#8d5524';
+  document.getElementById('modal-name').textContent = r.name;
+  document.getElementById('modal-category-region').textContent = `${r.chef} 셰프 · ${r.category} · ${r.region}`;
+  document.getElementById('modal-address').textContent = r.address;
+  document.getElementById('modal-desc').textContent = r.desc;
+  document.getElementById('modal-hours').textContent = r.hours;
+  document.getElementById('modal-phone').textContent = r.phone;
+  document.getElementById('modal-price').textContent = priceStr;
+  document.getElementById('modal-menus').innerHTML = r.menus.map(m =>
+    `<div class="menu-item"><span class="menu-name">${m.name}</span><span class="menu-price">${m.price.toLocaleString()}원</span></div>`).join('');
+  
+  const navBtn = document.getElementById('modal-nav-btn');
+  if(navBtn) navBtn.onclick = () => goToNaver(r.name, r.lat, r.lng);
+
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
 
 function buildPopup(r) {
   const starStr = '★'.repeat(r.stars) + '☆'.repeat(3 - r.stars);
@@ -236,16 +292,30 @@ function applyFilters() {
     );
   }
 
+  // Filter Bakery
+  let filteredBakery = [];
+  if (state.bakeryShow) {
+    filteredBakery = BAKERY_DATA.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      r.chef.toLowerCase().includes(q) ||
+      r.region.toLowerCase().includes(q) ||
+      r.address.toLowerCase().includes(q) ||
+      r.menus.some(m => m.name.toLowerCase().includes(q))
+    );
+  }
+
   // Combine
   state.filtered = [
     ...filteredMichelin.map(r => ({ ...r, type: 'michelin' })),
-    ...filteredBbr.map(r => ({ ...r, type: 'bbr' }))
+    ...filteredBbr.map(r => ({ ...r, type: 'bbr' })),
+    ...filteredBakery.map(r => ({ ...r, type: 'bakery' }))
   ];
 
   sortResults();
   document.getElementById('result-count-num').textContent = state.filtered.length;
   updateMarkers();
   updateBbrMarkers();
+  updateBakeryMarkers();
   renderList();
 }
 
@@ -326,6 +396,26 @@ function renderList() {
           <div class="card-price">💰 ${r.priceMin.toLocaleString()} ~ ${r.priceMax.toLocaleString()}원</div>
         </div>`;
       card.addEventListener('click', () => openBbrModal(r.id));
+    } else if (r.type === 'bakery') {
+      // Bakery Design
+      card.className = `rest-card bakery-card`;
+      card.innerHTML = `
+        <div class="card-body">
+          <div class="card-top">
+            <span class="bakery-badge-chip">천하제빵</span>
+            <span class="card-category">${r.category}</span>
+          </div>
+          <div class="card-name">${r.name}</div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px">👨‍🍳 ${r.chef} 셰프</div>
+          <div class="card-region">📍 ${r.region} · ${r.address.split(' ').slice(0, 3).join(' ')}</div>
+          <div class="card-menus">
+            ${r.menus.slice(0, 2).map(m =>
+              `<div class="card-menu"><span class="card-menu-item">${m.name} — ${m.price.toLocaleString()}원</span></div>`
+            ).join('')}
+          </div>
+          <div class="card-price">💰 ${r.priceMin.toLocaleString()} ~ ${r.priceMax.toLocaleString()}원</div>
+        </div>`;
+      card.addEventListener('click', () => openBakeryModal(r.id));
     }
     grid.appendChild(card);
   });
@@ -470,7 +560,15 @@ function bindEvents() {
       const v = e.target.value;
       e.target.checked ? state.bbrTiers.add(v) : state.bbrTiers.delete(v);
       updateBbrMarkers();
+      applyFilters();
     });
+  });
+
+  // Bakery filter
+  document.querySelector('.bakery-check').addEventListener('change', e => {
+    state.bakeryShow = e.target.checked;
+    updateBakeryMarkers();
+    applyFilters();
   });
 
   // Nav buttons
