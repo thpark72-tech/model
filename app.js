@@ -17,7 +17,9 @@ let state = {
   currentView: 'map',
   bbrShow: true,
   bbrSeasons: new Set([1, 2]),
-  bbrTiers: new Set(['백수저', '흑수저'])
+  bbrTiers: new Set(['백수저', '흑수저']),
+  userPos: null,
+  userMarker: null
 };
 
 // ── Init ────────────────────────────────────────
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStats();
   bindEvents();
   applyFilters();
+  setupLocationBtn();
 });
 
 // ── Build dynamic filters ───────────────────────
@@ -111,8 +114,16 @@ function buildBbrPopup(r) {
     <div style="font-size:0.78rem;color:#888;margin-bottom:4px">👨‍🍳 ${r.chef} 셰프</div>
     <div class="popup-region">📍 ${r.region} · ${r.address.split(' ').slice(0,3).join(' ')}</div>
     <div class="popup-price">💰 ${priceStr}</div>
-    <button class="popup-btn" onclick="openBbrModal('${r.id}')">상세 보기 →</button>
+    <div style="display:flex;gap:6px">
+      <button class="popup-btn" style="flex:1" onclick="openBbrModal('${r.id}')">상세 보기</button>
+      <button class="popup-btn btn-nav" style="flex:1;background:var(--gold)" onclick="goToNaver('${r.name}', ${r.lat}, ${r.lng})">길찾기</button>
+    </div>
   </div>`;
+}
+
+function goToNaver(name, lat, lng) {
+  const url = `https://m.map.naver.com/route.nhn?menu=route&ename=${encodeURIComponent(name)}&ex=${lng}&ey=${lat}&pathType=0`;
+  window.open(url, '_blank');
 }
 
 function openBbrModal(id) {
@@ -130,6 +141,13 @@ function openBbrModal(id) {
   document.getElementById('modal-price').textContent = priceStr;
   document.getElementById('modal-menus').innerHTML = r.menus.map(m =>
     `<div class="menu-item"><span class="menu-name">${m.name}</span><span class="menu-price">${m.price.toLocaleString()}원</span></div>`).join('');
+  
+  // Update modal nav button
+  const navBtn = document.getElementById('modal-nav-btn');
+  if(navBtn) {
+    navBtn.onclick = () => goToNaver(r.name, r.lat, r.lng);
+  }
+
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
 
@@ -179,7 +197,10 @@ function buildPopup(r) {
       <div class="popup-name">${r.name}</div>
       <div class="popup-region">📍 ${r.region} · ${r.address.split(' ').slice(0, 3).join(' ')}</div>
       <div class="popup-price">💰 ${priceStr}</div>
-      <button class="popup-btn" onclick="openModal(${r.id})">상세 보기 →</button>
+      <div style="display:flex;gap:6px">
+        <button class="popup-btn" style="flex:1" onclick="openModal(${r.id})">상세 보기</button>
+        <button class="popup-btn btn-nav" style="flex:1;background:var(--gold)" onclick="goToNaver('${r.name}', ${r.lat}, ${r.lng})">길찾기</button>
+      </div>
     </div>`;
 }
 
@@ -384,6 +405,12 @@ function openModal(id) {
        <span class="menu-price">${m.price.toLocaleString()}원</span>
      </div>`).join('');
 
+  // Update modal nav button
+  const navBtn = document.getElementById('modal-nav-btn');
+  if(navBtn) {
+    navBtn.onclick = () => goToNaver(r.name, r.lat, r.lng);
+  }
+
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
 
@@ -465,4 +492,57 @@ function bindEvents() {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+}
+
+// ── Geolocation ────────────────────────────────
+function setupLocationBtn() {
+  const mapEl = document.getElementById('view-map');
+  const btn = document.createElement('button');
+  btn.className = 'my-location-btn';
+  btn.innerHTML = '📍 내 위치';
+  btn.title = '현재 위치 확인';
+  btn.onclick = locateUser;
+  mapEl.appendChild(btn);
+}
+
+function locateUser() {
+  if (!navigator.geolocation) {
+    alert('이 브라우저는 위치 정보를 지원하지 않습니다.');
+    return;
+  }
+
+  const btn = document.querySelector('.my-location-btn');
+  btn.textContent = '📍 찾는 중...';
+  btn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      state.userPos = [lat, lng];
+
+      if (state.userMarker) {
+        state.userMarker.setLatLng(state.userPos);
+      } else {
+        const icon = L.divIcon({
+          className: 'user-marker',
+          html: '<div class="user-marker-pulse"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+        state.userMarker = L.marker(state.userPos, { icon, zIndexOffset: 1000 }).addTo(state.map);
+      }
+
+      state.map.setView(state.userPos, 13);
+      btn.textContent = '📍 내 위치';
+      btn.disabled = false;
+    },
+    (err) => {
+      console.error(err);
+      alert('위치 정보를 가져올 수 없습니다. 권한 설정을 확인해주세요.');
+      btn.textContent = '📍 내 위치';
+      btn.disabled = false;
+    },
+    { enableHighAccuracy: true }
+  );
 }
