@@ -152,13 +152,30 @@ const BBR_RESTAURANTS = [
     hours: "17:00-01:00", phone: "02-000-0000"
   },
   {
-    id: "s1b10", name: "본연 (BONYON)", season: 1, tier: "흑수저", chef: "배경준 (원투쓰리)", category: "컨템포러리", region: "서울",
+    id: "s1b10", name: "큔 (Qyun)", season: 1, tier: "흑수저", chef: "김혜수 (서촌 황태자)", category: "한식", region: "서울",
+    address: "서울 종로구 자하문로26길 17-2", lat: 37.5815, lng: 126.9695,
+    menus: [{ name: "채식 플레이트", price: 22000 }],
+    priceMin: 15000, priceMax: 40000,
+    desc: "서촌의 고즈넉한 분위기에서 즐기는 건강한 채식 요리.",
+    hours: "11:30-18:00", phone: "02-730-0000"
+  },
+  {
+    id: "s1b11", name: "본연 (BONYON)", season: 1, tier: "흑수저", chef: "배경준 (원투쓰리)", category: "컨템포러리", region: "서울",
     address: "서울 강남구 논현로 742", lat: 37.5205, lng: 127.0315,
     menus: [{ name: "코스 요리", price: 180000 }],
     priceMin: 180000, priceMax: 180000,
     desc: "미슐랭 3스타 출신 원투쓰리 셰프의 우드파이어 다이닝.",
     hours: "18:00-22:00", phone: "02-000-0000"
   },
+  {
+    id: "s1b12", name: "윤주당", season: 1, tier: "흑수저", chef: "윤나라 (술 빚는 윤주모)", category: "한식 주점", region: "서울",
+    address: "서울 용산구 신흥로 81-1", lat: 37.5453, lng: 126.9856,
+    menus: [{ name: "주모의 한상", price: 120000 }, { name: "치즈 감자전", price: 22000 }],
+    priceMin: 22000, priceMax: 150000,
+    desc: "전통주 전문가 윤나라 셰프의 해방촌 핫플레이스. 술과 요리의 완벽한 페어링.",
+    hours: "17:00-22:00 (예약 권장)", phone: "02-000-0000"
+  },
+
 
   // ══════════════════════════════════════
   // 시즌 2 (2025) - 백수저 (White Spoon)
