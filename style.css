@@ -783,3 +783,14 @@ input, select { font-family:inherit; }
   font-size: 18px;
   margin-right: 4px;
 }
+
+.my-location-btn.loading {
+  animation: btn-pulse 1.5s infinite;
+  background: var(--ivory);
+  pointer-events: none;
+}
+@keyframes btn-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}

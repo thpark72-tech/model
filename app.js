@@ -212,7 +212,14 @@ function buildBakeryPopup(r) {
 
 // ── Navigation Link ─────────────────────────────
 function goToNaver(name, lat, lng) {
-  const url = `https://m.map.naver.com/route.nhn?menu=route&ename=${encodeURIComponent(name)}&ex=${lng}&ey=${lat}&pathType=0`;
+  // Mobile Naver Maps route URL
+  let url = `https://m.map.naver.com/route.nhn?menu=route&ename=${encodeURIComponent(name)}&ex=${lng}&ey=${lat}&pathType=0`;
+  
+  if (state.userPos) {
+    // sx: longitude, sy: latitude
+    url += `&sname=${encodeURIComponent('내 위치')}&sx=${state.userPos[1]}&sy=${state.userPos[0]}`;
+  }
+  
   window.open(url, '_blank');
 }
 
@@ -455,23 +462,70 @@ function setupLocationBtn() {
 }
 
 function locateUser() {
-  if (!navigator.geolocation) { alert('위치 정보 미지원'); return; }
+  if (!navigator.geolocation) {
+    alert('이 브라우저는 위치 정보를 지원하지 않습니다.');
+    return;
+  }
+
   const btn = document.querySelector('.my-location-btn');
-  if(btn) btn.textContent = '📍 찾는 중...';
+  if(btn) {
+    btn.textContent = '📍 위치 찾는 중...';
+    btn.classList.add('loading');
+  }
+
+  const options = {
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 0
+  };
+
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       state.userPos = [lat, lng];
-      if (state.userMarker) state.userMarker.setLatLng(state.userPos);
-      else {
-        const icon = L.divIcon({ className: 'user-marker', html: '<div class="user-marker-pulse"></div>', iconSize: [20, 20], iconAnchor: [10, 10] });
+      
+      console.log("User Location Found:", lat, lng);
+
+      if (state.userMarker) {
+        state.userMarker.setLatLng(state.userPos);
+      } else {
+        const icon = L.divIcon({
+          className: 'user-marker',
+          html: '<div class="user-marker-pulse"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
         state.userMarker = L.marker(state.userPos, { icon, zIndexOffset: 1000 }).addTo(state.map);
       }
-      state.map.setView(state.userPos, 13);
-      if(btn) btn.textContent = '📍 내 위치';
+
+      state.map.setView(state.userPos, 14);
+      
+      if(btn) {
+        btn.textContent = '📍 위치 확인됨';
+        btn.classList.remove('loading');
+        btn.style.background = '#e8f5e9';
+        btn.style.borderColor = '#4caf50';
+        setTimeout(() => {
+          btn.textContent = '📍 내 위치';
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 3000);
+      }
     },
-    (err) => { alert('위치 정보 오류'); if(btn) btn.textContent = '📍 내 위치'; },
-    { enableHighAccuracy: true }
+    (err) => {
+      console.error("Geolocation Error:", err);
+      let msg = '위치 정보를 가져올 수 없습니다.';
+      if (err.code === 1) msg = '위치 정보 권한이 거부되었습니다. 브라우저 설정을 확인해주세요.';
+      else if (err.code === 2) msg = '위치 정보를 사용할 수 없습니다.';
+      else if (err.code === 3) msg = '위치 정보 요청 시간이 초과되었습니다.';
+      
+      alert(msg);
+      if(btn) {
+        btn.textContent = '📍 내 위치';
+        btn.classList.remove('loading');
+      }
+    },
+    options
   );
 }
