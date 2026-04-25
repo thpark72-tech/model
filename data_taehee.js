@@ -63,5 +63,61 @@ const TAEHEE_RESTAURANTS = [
     priceMin: 10000, priceMax: 25000,
     desc: "정갈한 나물과 함께 즐기는 구수한 보리밥 전문점.",
     hours: "11:00-21:00", phone: "041-000-0000"
+  },
+  {
+    id: "taehee09", name: "엄가네본가시골집", category: "한식/해장국", region: "천안",
+    address: "충남 천안시 서북구 봉정로 168-3", lat: 36.8220, lng: 127.1425,
+    menus: [{ name: "뼈해장국", price: 10000 }, { name: "선지해장국", price: 9000 }],
+    priceMin: 9000, priceMax: 15000,
+    desc: "천안의 유명한 해장국 맛집. 얼큰하고 진한 국물이 특징.",
+    hours: "24시간 영업", phone: "041-577-0000"
+  },
+  {
+    id: "taehee10", name: "안순영만두", category: "만두", region: "천안",
+    address: "충남 천안시 서북구 성거읍 망향로 684", lat: 36.8625, lng: 127.1745,
+    menus: [{ name: "고기만두", price: 6000 }, { name: "김치만두", price: 6000 }],
+    priceMin: 5000, priceMax: 12000,
+    desc: "속이 꽉 찬 수제 만두 전문점.",
+    hours: "10:00-21:00", phone: "041-555-0000"
+  },
+  {
+    id: "taehee11", name: "메타 인도 식당", category: "인도식", region: "천안",
+    address: "충남 천안시 서북구 성거읍 망향로 723", lat: 36.8655, lng: 127.1745,
+    menus: [{ name: "치킨 커리", price: 14000 }, { name: "난", price: 3000 }],
+    priceMin: 10000, priceMax: 30000,
+    desc: "천안 성거의 정통 인도 요리 전문점.",
+    hours: "11:00-22:00", phone: "041-556-0000"
+  },
+  {
+    id: "taehee12", name: "마리스커피", category: "카페", region: "천안",
+    address: "충남 천안시 동남구 천호지길 11", lat: 36.8285, lng: 127.1725,
+    menus: [{ name: "아인슈페너", price: 7000 }, { name: "디저트", price: 6500 }],
+    priceMin: 6000, priceMax: 15000,
+    desc: "단대호수(천호지) 뷰가 아름다운 감성 카페.",
+    hours: "10:00-23:00", phone: "041-557-0000"
+  },
+  {
+    id: "taehee13", name: "시골막국수", category: "한식/막국수", region: "천안",
+    address: "충남 천안시 서북구 성거읍 저리 21-15", lat: 36.8785, lng: 127.1785,
+    menus: [{ name: "물막국수", price: 9000 }, { name: "비빔막국수", price: 9500 }],
+    priceMin: 9000, priceMax: 15000,
+    desc: "성거읍의 시원하고 담백한 막국수 맛집.",
+    hours: "11:00-20:00", phone: "041-558-0000"
+  },
+  {
+    id: "taehee14", name: "태능참숯화로구이", category: "한식/고기", region: "천안",
+    address: "충남 천안시 서북구 성거읍 저리 1-21", lat: 36.8795, lng: 127.1785,
+    menus: [{ name: "돼지갈비", price: 16000 }, { name: "삼겹살", price: 15000 }],
+    priceMin: 15000, priceMax: 50000,
+    desc: "참숯으로 구워 풍미가 좋은 갈비 전문점.",
+    hours: "11:00-22:00", phone: "041-559-0000"
+  },
+  {
+    id: "taehee15", name: "들꽃", category: "한식", region: "천안",
+    address: "충남 천안시 동남구 호서대길 110", lat: 36.8345, lng: 127.1865,
+    menus: [{ name: "연잎밥 정식", price: 18000 }],
+    priceMin: 15000, priceMax: 30000,
+    desc: "호서대 인근의 정갈하고 건강한 한식 전문점.",
+    hours: "11:30-21:00", phone: "041-560-0000"
   }
 ];
