@@ -1,123 +1,37 @@
-// 태희맛집 (Taehee's Selection) 데이터
+// 태희맛집 (Taehee's Selection) 전국 데이터
 const TAEHEE_RESTAURANTS = [
-  {
-    id: "taehee01", name: "필댐굿 베이커리", category: "베이커리", region: "청주",
-    address: "충북 청주시 흥덕구 문암동 (이전 확인)", lat: 36.6710, lng: 127.4435,
-    menus: [{ name: "소금빵", price: 3500 }, { name: "크루아상", price: 4000 }],
-    priceMin: 3000, priceMax: 15000,
-    desc: "청주 문암생태공원 인근의 분위기 좋은 베이커리 맛집.",
-    hours: "11:00-20:00", phone: "043-000-0000"
-  },
-  {
-    id: "taehee02", name: "카케야", category: "일식", region: "화성/동탄",
-    address: "경기 화성시 동탄오산로 29 1층", lat: 37.1995, lng: 127.0945,
-    menus: [{ name: "카레라이스", price: 12000 }, { name: "돈카츠", price: 13000 }],
-    priceMin: 10000, priceMax: 20000,
-    desc: "동탄역 인근의 정갈한 일식 카레 전문점.",
-    hours: "11:30-21:00", phone: "031-000-0000"
-  },
-  {
-    id: "taehee03", name: "케이찹사라다 금천점", category: "샐러드", region: "청주",
-    address: "충북 청주시 상당구 수영로 276 104호", lat: 36.6185, lng: 127.5025,
-    menus: [{ name: "찹샐러드", price: 9500 }, { name: "샌드위치", price: 7500 }],
-    priceMin: 7000, priceMax: 15000,
-    desc: "신선한 재료로 만드는 건강한 샐러드 맛집.",
-    hours: "10:00-20:00", phone: "043-000-0000"
-  },
-  {
-    id: "taehee04", name: "레이지크해비탯 동탄점", category: "브런치", region: "화성/동탄",
-    address: "경기 화성시 동탄순환대로3길 28-8 1층", lat: 37.1755, lng: 127.1085,
-    menus: [{ name: "브런치 플레이트", price: 16000 }, { name: "에그 베네딕트", price: 15000 }],
-    priceMin: 12000, priceMax: 30000,
-    desc: "유럽풍 분위기에서 즐기는 정통 브런치 카페.",
-    hours: "10:00-18:00", phone: "031-000-0000"
-  },
-  {
-    id: "taehee05", name: "푸룻 베이커리 카페", category: "카페", region: "청주",
-    address: "충북 청주시 서원구 남이면 대림로 255-37", lat: 36.5855, lng: 127.4565,
-    menus: [{ name: "과일 타르트", price: 8500 }, { name: "아메리카노", price: 5500 }],
-    priceMin: 5000, priceMax: 20000,
-    desc: "청주 근교의 대형 베이커리 카페. 탁 트인 뷰와 과일 디저트가 특징.",
-    hours: "10:00-21:00", phone: "043-000-0000"
-  },
-  {
-    id: "taehee06", name: "오팻", category: "양식/파스타", region: "청주",
-    address: "충북 청주시 흥덕구 사운로236번길 13 1층", lat: 36.6455, lng: 127.4785,
-    menus: [{ name: "뇨끼", price: 18000 }, { name: "라자냐", price: 19000 }],
-    priceMin: 15000, priceMax: 40000,
-    desc: "청주 운천동에 위치한 감각적인 이탈리안 다이닝.",
-    hours: "12:00-21:00", phone: "043-000-0000"
-  },
-  {
-    id: "taehee07", name: "험블라이언", category: "카페/디저트", region: "아산",
-    address: "충남 아산시 음봉면 산동희망1길 7", lat: 36.8325, lng: 127.0855,
-    menus: [{ name: "수제 디저트", price: 7000 }],
-    priceMin: 5000, priceMax: 15000,
-    desc: "아산 음봉의 조용한 분위기 카페. 수제 디저트와 커피의 조화.",
-    hours: "11:00-20:00", phone: "041-000-0000"
-  },
-  {
-    id: "taehee08", name: "성씨네보리밥", category: "한식", region: "아산",
-    address: "충남 아산시 음봉면 산동희망1길 7", lat: 36.8326, lng: 127.0856,
-    menus: [{ name: "보리밥 정식", price: 11000 }, { name: "제육볶음", price: 15000 }],
-    priceMin: 10000, priceMax: 25000,
-    desc: "정갈한 나물과 함께 즐기는 구수한 보리밥 전문점.",
-    hours: "11:00-21:00", phone: "041-000-0000"
-  },
-  {
-    id: "taehee09", name: "엄가네본가시골집", category: "한식/해장국", region: "천안",
-    address: "충남 천안시 서북구 봉정로 168-3", lat: 36.8220, lng: 127.1425,
-    menus: [{ name: "뼈해장국", price: 10000 }, { name: "선지해장국", price: 9000 }],
-    priceMin: 9000, priceMax: 15000,
-    desc: "천안의 유명한 해장국 맛집. 얼큰하고 진한 국물이 특징.",
-    hours: "24시간 영업", phone: "041-577-0000"
-  },
-  {
-    id: "taehee10", name: "안순영만두", category: "만두", region: "천안",
-    address: "충남 천안시 서북구 성거읍 망향로 684", lat: 36.8625, lng: 127.1745,
-    menus: [{ name: "고기만두", price: 6000 }, { name: "김치만두", price: 6000 }],
-    priceMin: 5000, priceMax: 12000,
-    desc: "속이 꽉 찬 수제 만두 전문점.",
-    hours: "10:00-21:00", phone: "041-555-0000"
-  },
-  {
-    id: "taehee11", name: "메타 인도 식당", category: "인도식", region: "천안",
-    address: "충남 천안시 서북구 성거읍 망향로 723", lat: 36.8655, lng: 127.1745,
-    menus: [{ name: "치킨 커리", price: 14000 }, { name: "난", price: 3000 }],
-    priceMin: 10000, priceMax: 30000,
-    desc: "천안 성거의 정통 인도 요리 전문점.",
-    hours: "11:00-22:00", phone: "041-556-0000"
-  },
-  {
-    id: "taehee12", name: "마리스커피", category: "카페", region: "천안",
-    address: "충남 천안시 동남구 천호지길 11", lat: 36.8285, lng: 127.1725,
-    menus: [{ name: "아인슈페너", price: 7000 }, { name: "디저트", price: 6500 }],
-    priceMin: 6000, priceMax: 15000,
-    desc: "단대호수(천호지) 뷰가 아름다운 감성 카페.",
-    hours: "10:00-23:00", phone: "041-557-0000"
-  },
-  {
-    id: "taehee13", name: "시골막국수", category: "한식/막국수", region: "천안",
-    address: "충남 천안시 서북구 성거읍 저리 21-15", lat: 36.8785, lng: 127.1785,
-    menus: [{ name: "물막국수", price: 9000 }, { name: "비빔막국수", price: 9500 }],
-    priceMin: 9000, priceMax: 15000,
-    desc: "성거읍의 시원하고 담백한 막국수 맛집.",
-    hours: "11:00-20:00", phone: "041-558-0000"
-  },
-  {
-    id: "taehee14", name: "태능참숯화로구이", category: "한식/고기", region: "천안",
-    address: "충남 천안시 서북구 성거읍 저리 1-21", lat: 36.8795, lng: 127.1785,
-    menus: [{ name: "돼지갈비", price: 16000 }, { name: "삼겹살", price: 15000 }],
-    priceMin: 15000, priceMax: 50000,
-    desc: "참숯으로 구워 풍미가 좋은 갈비 전문점.",
-    hours: "11:00-22:00", phone: "041-559-0000"
-  },
-  {
-    id: "taehee15", name: "들꽃", category: "한식", region: "천안",
-    address: "충남 천안시 동남구 호서대길 110", lat: 36.8345, lng: 127.1865,
-    menus: [{ name: "연잎밥 정식", price: 18000 }],
-    priceMin: 15000, priceMax: 30000,
-    desc: "호서대 인근의 정갈하고 건강한 한식 전문점.",
-    hours: "11:30-21:00", phone: "041-560-0000"
-  }
+  // ── 청주/화성/동탄 (기존) ──
+  { id: "taehee01", name: "필댐굿 베이커리", category: "베이커리", region: "청주", address: "충북 청주시 흥덕구 문암동", lat: 36.6710, lng: 127.4435, menus: [{ name: "소금빵", price: 3500 }], priceMin: 3000, priceMax: 15000, desc: "청주 문암생태공원 인근의 분위기 좋은 베이커리 맛집.", hours: "11:00-20:00", phone: "043-000-0000" },
+  { id: "taehee02", name: "카케야", category: "일식", region: "화성/동탄", address: "경기 화성시 동탄오산로 29 1층", lat: 37.1995, lng: 127.0945, menus: [{ name: "카레라이스", price: 12000 }], priceMin: 10000, priceMax: 20000, desc: "동탄역 인근의 정갈한 일식 카레 전문점.", hours: "11:30-21:00", phone: "031-000-0000" },
+  { id: "taehee03", name: "케이찹사라다 금천점", category: "샐러드", region: "청주", address: "충북 청주시 상당구 수영로 276", lat: 36.6185, lng: 127.5025, menus: [{ name: "찹샐러드", price: 9500 }], priceMin: 7000, priceMax: 15000, desc: "건강한 샐러드 맛집.", hours: "10:00-20:00", phone: "043-000-0000" },
+  { id: "taehee04", name: "레이지크해비탯 동탄점", category: "브런치", region: "화성/동탄", address: "경기 화성시 동탄순환대로3길 28-8", lat: 37.1755, lng: 127.1085, menus: [{ name: "브런치 플레이트", price: 16000 }], priceMin: 12000, priceMax: 30000, desc: "유럽풍 브런치 카페.", hours: "10:00-18:00", phone: "031-000-0000" },
+  { id: "taehee05", name: "푸룻 베이커리 카페", category: "카페", region: "청주", address: "충북 청주시 서원구 남이면 대림로 255-37", lat: 36.5855, lng: 127.4565, menus: [{ name: "과일 타르트", price: 8500 }], priceMin: 5000, priceMax: 20000, desc: "청주 대형 베이커리 카페.", hours: "10:00-21:00", phone: "043-000-0000" },
+  { id: "taehee06", name: "오팻", category: "양식/파스타", region: "청주", address: "충북 청주시 흥덕구 사운로236번길 13", lat: 36.6455, lng: 127.4785, menus: [{ name: "뇨끼", price: 18000 }], priceMin: 15000, priceMax: 40000, desc: "청주 운천동 감각적인 이탈리안 다이닝.", hours: "12:00-21:00", phone: "043-000-0000" },
+  { id: "taehee07", name: "험블라이언", category: "카페/디저트", region: "아산", address: "충남 아산시 음봉면 산동희망1길 7", lat: 36.8325, lng: 127.0855, menus: [{ name: "수제 디저트", price: 7000 }], priceMin: 5000, priceMax: 15000, desc: "아산 음봉의 조용한 분위기 카페.", hours: "11:00-20:00", phone: "041-000-0000" },
+  { id: "taehee08", name: "성씨네보리밥", category: "한식", region: "아산", address: "충남 아산시 음봉면 산동희망1길 7", lat: 36.8326, lng: 127.0856, menus: [{ name: "보리밥 정식", price: 11000 }], priceMin: 10000, priceMax: 25000, desc: "구수한 보리밥 전문점.", hours: "11:00-21:00", phone: "041-000-0000" },
+
+  // ── 천안 (추가) ──
+  { id: "taehee09", name: "엄가네본가시골집", category: "한식/해장국", region: "천안", address: "충남 천안시 서북구 봉정로 168-3", lat: 36.8220, lng: 127.1425, menus: [{ name: "뼈해장국", price: 10000 }], priceMin: 9000, priceMax: 15000, desc: "천안 대표 해장국 맛집.", hours: "24시간", phone: "041-577-0000" },
+  { id: "taehee10", name: "안순영만두", category: "만두", region: "천안", address: "충남 천안시 서북구 성거읍 망향로 684", lat: 36.8625, lng: 127.1745, menus: [{ name: "고기만두", price: 6000 }], priceMin: 5000, priceMax: 12000, desc: "수제 만두 전문점.", hours: "10:00-21:00", phone: "041-555-0000" },
+  { id: "taehee11", name: "메타 인도 식당", category: "인도식", region: "천안", address: "충남 천안시 서북구 성거읍 망향로 723", lat: 36.8655, lng: 127.1745, menus: [{ name: "치킨 커리", price: 14000 }], priceMin: 10000, priceMax: 30000, desc: "정통 인도 요리.", hours: "11:00-22:00", phone: "041-556-0000" },
+  { id: "taehee12", name: "마리스커피", category: "카페", region: "천안", address: "충남 천안시 동남구 천호지길 11", lat: 36.8285, lng: 127.1725, menus: [{ name: "아인슈페너", price: 7000 }], priceMin: 6000, priceMax: 15000, desc: "단대호수 뷰 카페.", hours: "10:00-23:00", phone: "041-557-0000" },
+  { id: "taehee13", name: "시골막국수", category: "한식/막국수", region: "천안", address: "충남 천안시 서북구 성거읍 저리 21-15", lat: 36.8785, lng: 127.1785, menus: [{ name: "물막국수", price: 9000 }], priceMin: 9000, priceMax: 15000, desc: "성거읍 막국수 맛집.", hours: "11:00-20:00", phone: "041-558-0000" },
+  { id: "taehee14", name: "태능참숯화로구이", category: "한식/고기", region: "천안", address: "충남 천안시 서북구 성거읍 저리 1-21", lat: 36.8795, lng: 127.1785, menus: [{ name: "돼지갈비", price: 16000 }], priceMin: 15000, priceMax: 50000, desc: "참숯 갈비 전문점.", hours: "11:00-22:00", phone: "041-559-0000" },
+  { id: "taehee15", name: "들꽃", category: "한식", region: "천안", address: "충남 천안시 동남구 호서대길 110", lat: 36.8345, lng: 127.1865, menus: [{ name: "연잎밥 정식", price: 18000 }], priceMin: 15000, priceMax: 30000, desc: "정갈한 한식 전문점.", hours: "11:30-21:00", phone: "041-560-0000" },
+  { id: "taehee16", name: "카페 이숲", category: "카페", region: "천안", address: "충남 천안시 서북구 성거읍 망향로 510-32", lat: 36.8525, lng: 127.1765, menus: [{ name: "시그니처 커피", price: 7500 }], priceMin: 6000, priceMax: 15000, desc: "성거읍의 정원이 예쁜 감성 카페.", hours: "11:00-21:00", phone: "041-000-0000" },
+  { id: "taehee17", name: "바다향아구찜", category: "한식/아구찜", region: "천안", address: "충남 천안시 서북구 성거읍 신월길 16", lat: 36.8855, lng: 127.1685, menus: [{ name: "아구찜", price: 35000 }], priceMin: 25000, priceMax: 60000, desc: "성거읍의 푸짐한 아구찜 전문점.", hours: "11:00-22:00", phone: "041-000-0000" },
+
+  // ── 전국 주요 도시 (서울/부산/제주 등) ──
+  { id: "taehee18", name: "진미식당", category: "한식/게장", region: "서울", address: "서울 마포구 마포대로 186-6", lat: 37.5455, lng: 126.9555, menus: [{ name: "간장게장", price: 45000 }], priceMin: 45000, priceMax: 50000, desc: "서울 3대 간장게장 맛집 중 하나.", hours: "12:00-20:00", phone: "02-3211-4468" },
+  { id: "taehee19", name: "국제밀면 본점", category: "한식/밀면", region: "부산", address: "부산 연제구 거제천로 225", lat: 35.1915, lng: 129.0745, menus: [{ name: "물밀면", price: 9000 }], priceMin: 8000, priceMax: 12000, desc: "부산 3대 밀면 맛집으로 손꼽히는 곳.", hours: "10:00-21:00", phone: "051-501-5507" },
+  { id: "taehee20", name: "차애전할매칼국수", category: "한식/칼국수", region: "부산", address: "부산 연제구 과정로 225", lat: 35.1885, lng: 129.1085, menus: [{ name: "할매칼국수", price: 7000 }], priceMin: 6000, priceMax: 10000, desc: "부산의 전설적인 칼국수 노포.", hours: "09:30-21:00", phone: "051-751-0771" },
+  { id: "taehee21", name: "83해치", category: "한식/고기", region: "부산", address: "부산 부산진구 서전로 46번길 80", lat: 35.1555, lng: 129.0655, menus: [{ name: "생삼겹살", price: 13000 }], priceMin: 13000, priceMax: 40000, desc: "부산 전포동의 줄 서서 먹는 삼겹살 맛집.", hours: "16:00-01:00", phone: "051-817-8333" },
+  { id: "taehee22", name: "돈사돈 본점", category: "한식/고기", region: "제주", address: "제주 제주시 우평로 19", lat: 33.4815, lng: 126.4715, menus: [{ name: "흑돼지 600g", price: 66000 }], priceMin: 60000, priceMax: 150000, desc: "제주 흑돼지 근고기 열풍의 주인공.", hours: "12:00-22:00", phone: "064-746-8989" },
+  { id: "taehee23", name: "대원가", category: "한식/해물탕", region: "제주", address: "제주 제주시 도남로 16", lat: 33.4985, lng: 126.5255, menus: [{ name: "활문어 해물탕", price: 70000 }], priceMin: 60000, priceMax: 120000, desc: "신선한 해산물이 가득한 제주 해물탕 맛집.", hours: "09:00-21:00", phone: "064-753-3030" },
+  { id: "taehee24", name: "태평소국밥", category: "한식/국밥", region: "대전", address: "대전 유성구 온천동로65번길 50", lat: 36.3555, lng: 127.3485, menus: [{ name: "소국밥", price: 8500 }], priceMin: 8000, priceMax: 15000, desc: "대전에서 가장 유명한 소국밥 성지.", hours: "24시간", phone: "042-525-5820" },
+  { id: "taehee25", name: "오씨칼국수", category: "한식/칼국수", region: "대전", address: "대전 동구 옛신탄진로 13", lat: 36.3455, lng: 127.4325, menus: [{ name: "물총칼국수", price: 8000 }], priceMin: 7000, priceMax: 15000, desc: "물총조개가 가득 들어간 대전 대표 칼국수.", hours: "11:00-21:00", phone: "042-627-9972" },
+  { id: "taehee26", name: "리안", category: "중식", region: "대구", address: "대구 수성구 교학로 4길 48", lat: 35.8555, lng: 128.6555, menus: [{ name: "야끼우동", price: 9000 }], priceMin: 8000, priceMax: 25000, desc: "대구 야끼우동과 탕수육의 절대 강자.", hours: "11:30-21:00", phone: "053-746-0203" },
+  { id: "taehee27", name: "본수원갈비", category: "한식/고기", region: "수원", address: "경기 수원시 팔달구 중부대로223번길 41", lat: 37.2785, lng: 127.0425, menus: [{ name: "생갈비", price: 65000 }], priceMin: 60000, priceMax: 150000, desc: "수원 왕갈비의 자존심.", hours: "11:30-21:30", phone: "031-211-8434" },
+  { id: "taehee28", name: "유치회관", category: "한식/해장국", region: "수원", address: "경기 수원시 팔달구 효원로292번길 67", lat: 37.2655, lng: 127.0315, menus: [{ name: "해장국", price: 10000 }], priceMin: 10000, priceMax: 15000, desc: "백종원의 3대천왕에도 소개된 수원 해장국 노포.", hours: "24시간", phone: "031-234-6275" },
+  { id: "taehee29", name: "이당 비스트로", category: "이탈리아식", region: "인천", address: "인천 남동구 수산동 13-1", lat: 37.4355, lng: 126.7355, menus: [{ name: "파스타", price: 18000 }], priceMin: 15000, priceMax: 60000, desc: "고즈넉한 한옥에서 즐기는 분위기 좋은 이탈리안 다이닝.", hours: "11:00-22:00", phone: "032-464-3737" }
 ];
