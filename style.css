@@ -236,9 +236,10 @@ input, select { font-family:inherit; }
   background:linear-gradient(to bottom, transparent, var(--parchment-dk), transparent);
 }
 .logo-title {
-  font-family:'Playfair Display', serif;
-  font-size:1.45rem; color:var(--burgundy);
-  letter-spacing:0.02em; line-height:1.1;
+  font-family:'Noto Sans KR', sans-serif;
+  font-size:1.5rem; color:var(--burgundy);
+  font-weight: 900;
+  letter-spacing:-0.02em; line-height:1.1;
 }
 .logo-sub {
   font-size:0.6rem; color:var(--text-muted);
