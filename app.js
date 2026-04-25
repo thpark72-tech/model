@@ -6,8 +6,8 @@
 let state = {
   search: '',
   stars: new Set([1, 2, 3]),
-  categories: new Set(),
-  regions: new Set(),
+  category: 'all',
+  region: 'all',
   maxPrice: 500000,
   sort: 'star-desc',
   filtered: [],
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyFilters();
     setupLocationBtn();
     
-    // Refresh map size
     if (state.map) {
       setTimeout(() => state.map.invalidateSize(), 500);
     }
@@ -46,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── Build dynamic filters ───────────────────────
+// ── Build Select Dropdowns ──────────────────────
 function buildFilters() {
   const mRes = typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : [];
   const bRes = typeof BBR_RESTAURANTS !== 'undefined' ? BBR_RESTAURANTS : [];
@@ -57,39 +56,27 @@ function buildFilters() {
   const cats = [...new Set(allRes.map(r => r.category))].sort();
   const regs = [...new Set(allRes.map(r => r.region))].sort();
 
-  const catEl = document.getElementById('category-filters');
-  if (catEl) {
-    catEl.innerHTML = '';
+  const catSelect = document.getElementById('category-select');
+  if (catSelect) {
+    catSelect.innerHTML = '<option value="all">전체 카테고리</option>';
     cats.forEach(c => {
-      state.categories.add(c);
-      const btn = document.createElement('button');
-      btn.className = 'filter-chip active';
-      btn.dataset.cat = c;
-      btn.textContent = c;
-      btn.addEventListener('click', () => toggleChip(btn, state.categories, c));
-      catEl.appendChild(btn);
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      catSelect.appendChild(opt);
     });
   }
 
-  const regEl = document.getElementById('region-filters');
-  if (regEl) {
-    regEl.innerHTML = '';
+  const regSelect = document.getElementById('region-select');
+  if (regSelect) {
+    regSelect.innerHTML = '<option value="all">전체 지역</option>';
     regs.forEach(r => {
-      state.regions.add(r);
-      const btn = document.createElement('button');
-      btn.className = 'filter-chip active';
-      btn.dataset.reg = r;
-      btn.textContent = r;
-      btn.addEventListener('click', () => toggleChip(btn, state.regions, r));
-      regEl.appendChild(btn);
+      const opt = document.createElement('option');
+      opt.value = r;
+      opt.textContent = r;
+      regSelect.appendChild(opt);
     });
   }
-}
-
-function toggleChip(btn, set, val) {
-  if (set.has(val)) { set.delete(val); btn.classList.remove('active'); }
-  else { set.add(val); btn.classList.add('active'); }
-  applyFilters();
 }
 
 // ── Map ─────────────────────────────────────────
@@ -259,8 +246,8 @@ function applyFilters() {
   const mData = typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : [];
   const filteredMichelin = mData.filter(r =>
     state.stars.has(r.stars) &&
-    state.categories.has(r.category) &&
-    state.regions.has(r.region) &&
+    (state.category === 'all' || r.category === state.category) &&
+    (state.region === 'all' || r.region === state.region) &&
     r.priceMin <= state.maxPrice &&
     (r.name.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q) || r.address.toLowerCase().includes(q))
   );
@@ -271,8 +258,8 @@ function applyFilters() {
     filteredBbr = BBR_RESTAURANTS.filter(r =>
       state.bbrSeasons.has(r.season) &&
       state.bbrTiers.has(r.tier) &&
-      state.categories.has(r.category) &&
-      state.regions.has(r.region) &&
+      (state.category === 'all' || r.category === state.category) &&
+      (state.region === 'all' || r.region === state.region) &&
       (r.name.toLowerCase().includes(q) || r.chef.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q))
     );
   }
@@ -281,8 +268,8 @@ function applyFilters() {
   let filteredBakery = [];
   if (state.bakeryShow && typeof BAKERY_DATA !== 'undefined') {
     filteredBakery = BAKERY_DATA.filter(r =>
-      state.categories.has(r.category) &&
-      state.regions.has(r.region) &&
+      (state.category === 'all' || r.category === state.category) &&
+      (state.region === 'all' || r.region === state.region) &&
       (r.name.toLowerCase().includes(q) || r.chef.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q))
     );
   }
@@ -291,8 +278,8 @@ function applyFilters() {
   let filteredTaehee = [];
   if (state.taeheeShow && typeof TAEHEE_RESTAURANTS !== 'undefined') {
     filteredTaehee = TAEHEE_RESTAURANTS.filter(r =>
-      state.categories.has(r.category) &&
-      state.regions.has(r.region) &&
+      (state.category === 'all' || r.category === state.category) &&
+      (state.region === 'all' || r.region === state.region) &&
       (r.name.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q) || r.address.toLowerCase().includes(q))
     );
   }
@@ -459,6 +446,9 @@ function bindEvents() {
       applyFilters();
     });
   });
+
+  listen('category-select', 'change', e => { state.category = e.target.value; applyFilters(); });
+  listen('region-select', 'change', e => { state.region = e.target.value; applyFilters(); });
 
   listen('price-range', 'input', e => {
     state.maxPrice = parseInt(e.target.value);
