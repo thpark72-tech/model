@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   MICHELIN & BBR & BAKERY PORTAL – APP.JS
+   MICHELIN & BBR & BAKERY & TAEHEE PORTAL – APP.JS
 ═══════════════════════════════════════════════ */
 
 // ── State ──────────────────────────────────────
@@ -15,11 +15,13 @@ let state = {
   markers: [],
   bbrMarkers: [],
   bakeryMarkers: [],
+  taeheeMarkers: [],
   currentView: 'map',
   bbrShow: true,
   bbrSeasons: new Set([1, 2]),
   bbrTiers: new Set(['백수저', '흑수저']),
   bakeryShow: true,
+  taeheeShow: true,
   userPos: null,
   userMarker: null
 };
@@ -46,7 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── Build dynamic filters ───────────────────────
 function buildFilters() {
-  const allRes = typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : [];
+  const mRes = typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : [];
+  const bRes = typeof BBR_RESTAURANTS !== 'undefined' ? BBR_RESTAURANTS : [];
+  const baRes = typeof BAKERY_DATA !== 'undefined' ? BAKERY_DATA : [];
+  const tRes = typeof TAEHEE_RESTAURANTS !== 'undefined' ? TAEHEE_RESTAURANTS : [];
+  
+  const allRes = [...mRes, ...bRes, ...baRes, ...tRes];
   const cats = [...new Set(allRes.map(r => r.category))].sort();
   const regs = [...new Set(allRes.map(r => r.region))].sort();
 
@@ -102,9 +109,11 @@ function clearAllMarkers() {
   if (state.markers) state.markers.forEach(m => m.marker.remove());
   if (state.bbrMarkers) state.bbrMarkers.forEach(m => m.marker.remove());
   if (state.bakeryMarkers) state.bakeryMarkers.forEach(m => m.marker.remove());
+  if (state.taeheeMarkers) state.taeheeMarkers.forEach(m => m.marker.remove());
   state.markers = [];
   state.bbrMarkers = [];
   state.bakeryMarkers = [];
+  state.taeheeMarkers = [];
 }
 
 function updateAllMarkers() {
@@ -116,6 +125,7 @@ function updateAllMarkers() {
       if (r.type === 'michelin') renderMichelinMarker(r);
       else if (r.type === 'bbr') renderBbrMarker(r);
       else if (r.type === 'bakery') renderBakeryMarker(r);
+      else if (r.type === 'taehee') renderTaeheeMarker(r);
     } catch (e) {
       console.error("Error rendering marker for:", r.name, e);
     }
@@ -157,6 +167,14 @@ function renderBakeryMarker(r) {
   state.bakeryMarkers.push({ id: r.id, marker });
 }
 
+function renderTaeheeMarker(r) {
+  const icon_html = `<div class="taehee-map-label"><span class="taehee-emoji">💖</span><span class="taehee-name">${r.name}</span></div>`;
+  const w = Math.max(r.name.length * 13 + 45, 90);
+  const icon = L.divIcon({ className:'', html: icon_html, iconSize:[w,26], iconAnchor:[w/2,13], popupAnchor:[0,-16] });
+  const marker = L.marker([r.lat, r.lng], { icon }).addTo(state.map).bindPopup(buildTaeheePopup(r), { maxWidth: 260 });
+  state.taeheeMarkers.push({ id: r.id, marker });
+}
+
 // ── Popups ─────────────────────────────────────
 function buildPopup(r) {
   const starCount = r.stars || 1;
@@ -194,7 +212,6 @@ function buildBbrPopup(r) {
 }
 
 function buildBakeryPopup(r) {
-  const priceStr = r.priceMin === r.priceMax ? `${r.priceMin.toLocaleString()}원` : `${r.priceMin.toLocaleString()} ~ ${r.priceMax.toLocaleString()}원`;
   return `<div class="popup-card">
     <div class="popup-star-row">
       <span style="font-size:0.75rem;background:#8d5524;color:#fff;padding:2px 8px;border-radius:8px;font-weight:700">천하제빵</span>
@@ -210,16 +227,27 @@ function buildBakeryPopup(r) {
   </div>`;
 }
 
+function buildTaeheePopup(r) {
+  return `<div class="popup-card">
+    <div class="popup-star-row">
+      <span style="font-size:0.75rem;background:#ff69b4;color:#fff;padding:2px 8px;border-radius:8px;font-weight:700">태희맛집</span>
+      <span class="popup-category">${r.category}</span>
+    </div>
+    <div class="popup-name">${r.name}</div>
+    <div class="popup-region">📍 ${r.region} · ${r.address.split(' ').slice(0,3).join(' ')}</div>
+    <div style="display:flex;gap:6px">
+      <button class="popup-btn" style="flex:1" onclick="openTaeheeModal('${r.id}')">상세 보기</button>
+      <button class="popup-btn btn-nav" style="flex:1;background:var(--gold)" onclick="goToNaver('${r.name}', ${r.lat}, ${r.lng})">길찾기</button>
+    </div>
+  </div>`;
+}
+
 // ── Navigation Link ─────────────────────────────
 function goToNaver(name, lat, lng) {
-  // Mobile Naver Maps route URL
   let url = `https://m.map.naver.com/route.nhn?menu=route&ename=${encodeURIComponent(name)}&ex=${lng}&ey=${lat}&pathType=0`;
-  
   if (state.userPos) {
-    // sx: longitude, sy: latitude
     url += `&sname=${encodeURIComponent('내 위치')}&sx=${state.userPos[1]}&sy=${state.userPos[0]}`;
   }
-  
   window.open(url, '_blank');
 }
 
@@ -243,6 +271,8 @@ function applyFilters() {
     filteredBbr = BBR_RESTAURANTS.filter(r =>
       state.bbrSeasons.has(r.season) &&
       state.bbrTiers.has(r.tier) &&
+      state.categories.has(r.category) &&
+      state.regions.has(r.region) &&
       (r.name.toLowerCase().includes(q) || r.chef.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q))
     );
   }
@@ -251,14 +281,27 @@ function applyFilters() {
   let filteredBakery = [];
   if (state.bakeryShow && typeof BAKERY_DATA !== 'undefined') {
     filteredBakery = BAKERY_DATA.filter(r =>
+      state.categories.has(r.category) &&
+      state.regions.has(r.region) &&
       (r.name.toLowerCase().includes(q) || r.chef.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q))
+    );
+  }
+
+  // Taehee
+  let filteredTaehee = [];
+  if (state.taeheeShow && typeof TAEHEE_RESTAURANTS !== 'undefined') {
+    filteredTaehee = TAEHEE_RESTAURANTS.filter(r =>
+      state.categories.has(r.category) &&
+      state.regions.has(r.region) &&
+      (r.name.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.region.toLowerCase().includes(q) || r.address.toLowerCase().includes(q))
     );
   }
 
   state.filtered = [
     ...filteredMichelin.map(r => ({ ...r, type: 'michelin' })),
     ...filteredBbr.map(r => ({ ...r, type: 'bbr' })),
-    ...filteredBakery.map(r => ({ ...r, type: 'bakery' }))
+    ...filteredBakery.map(r => ({ ...r, type: 'bakery' })),
+    ...filteredTaehee.map(r => ({ ...r, type: 'taehee' }))
   ];
 
   sortResults();
@@ -304,6 +347,12 @@ function openBakeryModal(id) {
   populateModal(r, `🥐 천하제빵`, '#8d5524', `${r.chef} 셰프 · ${r.category} · ${r.region}`);
 }
 
+function openTaeheeModal(id) {
+  const r = TAEHEE_RESTAURANTS.find(x => x.id === id);
+  if (!r) return;
+  populateModal(r, `💖 태희맛집`, '#ff69b4', `${r.category} · ${r.region}`);
+}
+
 function populateModal(r, starText, starColor, subText) {
   document.getElementById('modal-star').textContent = starText;
   document.getElementById('modal-star').style.color = starColor;
@@ -313,9 +362,9 @@ function populateModal(r, starText, starColor, subText) {
   document.getElementById('modal-desc').textContent = r.desc;
   document.getElementById('modal-hours').textContent = r.hours;
   document.getElementById('modal-phone').textContent = r.phone;
-  document.getElementById('modal-price').textContent = `${r.priceMin.toLocaleString()}원 ~ ${r.priceMax.toLocaleString()}원`;
-  document.getElementById('modal-menus').innerHTML = r.menus.map(m =>
-    `<div class="menu-item"><span class="menu-name">${m.name}</span><span class="menu-price">${m.price.toLocaleString()}원</span></div>`).join('');
+  document.getElementById('modal-price').textContent = `${(r.priceMin||0).toLocaleString()}원 ~ ${(r.priceMax||0).toLocaleString()}원`;
+  document.getElementById('modal-menus').innerHTML = (r.menus||[]).map(m =>
+    `<div class="menu-item"><span class="menu-name">${m.name}</span><span class="menu-price">${(m.price||0).toLocaleString()}원</span></div>`).join('');
   
   const navBtn = document.getElementById('modal-nav-btn');
   if(navBtn) navBtn.onclick = () => goToNaver(r.name, r.lat, r.lng);
@@ -342,8 +391,7 @@ function renderList() {
     const card = document.createElement('div');
     if (r.type === 'michelin') {
       card.className = `rest-card stars-${r.stars}`;
-      card.innerHTML = `
-        <div class="card-body">
+      card.innerHTML = `<div class="card-body">
           <div class="card-top"><span class="card-star-badge star-${r.stars}">${'★'.repeat(r.stars)}</span><span class="card-category">${r.category}</span></div>
           <div class="card-name">${r.name}</div>
           <div class="card-region">📍 ${r.region} · ${r.address.split(' ').slice(0, 3).join(' ')}</div>
@@ -353,24 +401,30 @@ function renderList() {
     } else if (r.type === 'bbr') {
       const tierClass = r.tier === '백수저' ? 'tier-white' : 'tier-black';
       card.className = `rest-card bbr-card ${tierClass}`;
-      card.innerHTML = `
-        <div class="card-body">
+      card.innerHTML = `<div class="card-body">
           <div class="card-top"><span class="bbr-badge-chip">${r.tier}</span><span class="card-category">시즌 ${r.season} · ${r.category}</span></div>
           <div class="card-name">${r.name}</div>
           <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px">👨‍🍳 ${r.chef} 셰프</div>
           <div class="card-region">📍 ${r.region} · ${r.address.split(' ').slice(0, 3).join(' ')}</div>
         </div>`;
       card.addEventListener('click', () => openBbrModal(r.id));
-    } else {
+    } else if (r.type === 'bakery') {
       card.className = `rest-card bakery-card`;
-      card.innerHTML = `
-        <div class="card-body">
+      card.innerHTML = `<div class="card-body">
           <div class="card-top"><span class="bakery-badge-chip">천하제빵</span><span class="card-category">${r.category}</span></div>
           <div class="card-name">${r.name}</div>
           <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px">👨‍🍳 ${r.chef} 셰프</div>
           <div class="card-region">📍 ${r.region} · ${r.address.split(' ').slice(0, 3).join(' ')}</div>
         </div>`;
       card.addEventListener('click', () => openBakeryModal(r.id));
+    } else {
+      card.className = `rest-card taehee-card`;
+      card.innerHTML = `<div class="card-body">
+          <div class="card-top"><span class="taehee-badge-chip">태희맛집</span><span class="card-category">${r.category}</span></div>
+          <div class="card-name">${r.name}</div>
+          <div class="card-region">📍 ${r.region} · ${r.address.split(' ').slice(0, 3).join(' ')}</div>
+        </div>`;
+      card.addEventListener('click', () => openTaeheeModal(r.id));
     }
     grid.appendChild(card);
   });
@@ -378,12 +432,17 @@ function renderList() {
 
 // ── Stats ───────────────────────────────────────
 function renderStats() {
-  const all = typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : [];
+  const mRes = typeof RESTAURANTS !== 'undefined' ? RESTAURANTS : [];
+  const bRes = typeof BBR_RESTAURANTS !== 'undefined' ? BBR_RESTAURANTS : [];
+  const baRes = typeof BAKERY_DATA !== 'undefined' ? BAKERY_DATA : [];
+  const tRes = typeof TAEHEE_RESTAURANTS !== 'undefined' ? TAEHEE_RESTAURANTS : [];
+  
+  const total = mRes.length + bRes.length + baRes.length + tRes.length;
   const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-  setVal('stat-total', all.length);
-  setVal('stat-3star', all.filter(r => r.stars === 3).length);
-  setVal('stat-2star', all.filter(r => r.stars === 2).length);
-  setVal('stat-1star', all.filter(r => r.stars === 1).length);
+  setVal('stat-total', total);
+  setVal('stat-3star', mRes.filter(r => r.stars === 3).length);
+  setVal('stat-2star', mRes.filter(r => r.stars === 2).length);
+  setVal('stat-1star', mRes.filter(r => r.stars === 1).length);
 }
 
 // ── Events ───────────────────────────────────────
@@ -413,6 +472,12 @@ function bindEvents() {
   const bbrCheck = document.querySelector('.bbr-check');
   if(bbrCheck) bbrCheck.addEventListener('change', e => { state.bbrShow = e.target.checked; applyFilters(); });
 
+  const bakeryCheck = document.querySelector('.bakery-check');
+  if(bakeryCheck) bakeryCheck.addEventListener('change', e => { state.bakeryShow = e.target.checked; applyFilters(); });
+
+  const taeheeCheck = document.querySelector('.taehee-check');
+  if(taeheeCheck) taeheeCheck.addEventListener('change', e => { state.taeheeShow = e.target.checked; applyFilters(); });
+
   document.querySelectorAll('.season-check').forEach(cb => {
     cb.addEventListener('change', e => {
       const v = parseInt(e.target.value);
@@ -428,9 +493,6 @@ function bindEvents() {
       applyFilters();
     });
   });
-
-  const bakeryCheck = document.querySelector('.bakery-check');
-  if(bakeryCheck) bakeryCheck.addEventListener('change', e => { state.bakeryShow = e.target.checked; applyFilters(); });
 
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -462,70 +524,23 @@ function setupLocationBtn() {
 }
 
 function locateUser() {
-  if (!navigator.geolocation) {
-    alert('이 브라우저는 위치 정보를 지원하지 않습니다.');
-    return;
-  }
-
+  if (!navigator.geolocation) { alert('이 브라우저는 위치 정보를 지원하지 않습니다.'); return; }
   const btn = document.querySelector('.my-location-btn');
-  if(btn) {
-    btn.textContent = '📍 위치 찾는 중...';
-    btn.classList.add('loading');
-  }
-
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 0
-  };
-
+  if(btn) { btn.textContent = '📍 위치 찾는 중...'; btn.classList.add('loading'); }
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       state.userPos = [lat, lng];
-      
-      console.log("User Location Found:", lat, lng);
-
-      if (state.userMarker) {
-        state.userMarker.setLatLng(state.userPos);
-      } else {
-        const icon = L.divIcon({
-          className: 'user-marker',
-          html: '<div class="user-marker-pulse"></div>',
-          iconSize: [20, 20],
-          iconAnchor: [10, 10]
-        });
+      if (state.userMarker) state.userMarker.setLatLng(state.userPos);
+      else {
+        const icon = L.divIcon({ className: 'user-marker', html: '<div class="user-marker-pulse"></div>', iconSize: [20, 20], iconAnchor: [10, 10] });
         state.userMarker = L.marker(state.userPos, { icon, zIndexOffset: 1000 }).addTo(state.map);
       }
-
       state.map.setView(state.userPos, 14);
-      
-      if(btn) {
-        btn.textContent = '📍 위치 확인됨';
-        btn.classList.remove('loading');
-        btn.style.background = '#e8f5e9';
-        btn.style.borderColor = '#4caf50';
-        setTimeout(() => {
-          btn.textContent = '📍 내 위치';
-          btn.style.background = '';
-          btn.style.borderColor = '';
-        }, 3000);
-      }
+      if(btn) { btn.textContent = '📍 위치 확인됨'; btn.classList.remove('loading'); btn.style.background = '#e8f5e9'; setTimeout(() => { btn.textContent = '📍 내 위치'; btn.style.background = ''; }, 3000); }
     },
-    (err) => {
-      console.error("Geolocation Error:", err);
-      let msg = '위치 정보를 가져올 수 없습니다.';
-      if (err.code === 1) msg = '위치 정보 권한이 거부되었습니다. 브라우저 설정을 확인해주세요.';
-      else if (err.code === 2) msg = '위치 정보를 사용할 수 없습니다.';
-      else if (err.code === 3) msg = '위치 정보 요청 시간이 초과되었습니다.';
-      
-      alert(msg);
-      if(btn) {
-        btn.textContent = '📍 내 위치';
-        btn.classList.remove('loading');
-      }
-    },
-    options
+    (err) => { alert('위치 정보를 가져올 수 없습니다.'); if(btn) { btn.textContent = '📍 내 위치'; btn.classList.remove('loading'); } },
+    { enableHighAccuracy: true, timeout: 10000 }
   );
 }

@@ -53,9 +53,12 @@
           <h3 class="filter-title">⭐ 스타 등급</h3>
           <div class="star-filters">
             <label class="star-label">
-              <input type="checkbox" class="star-check" value="3" checked />
-              <span class="star-badge star-3">★★★</span>
-              <span>3스타</span>
+              <input type="checkbox" class="bakery-check" checked />
+              <span class="star-badge" style="background:rgba(141,85,36,0.12);color:#8d5524;border:1px solid rgba(141,85,36,0.3)">🥐 방송 출연 빵집</span>
+            </label>
+            <label class="star-label">
+              <input type="checkbox" class="taehee-check" checked />
+              <span class="star-badge" style="background:rgba(255,105,180,0.12);color:#ff69b4;border:1px solid rgba(255,105,180,0.3)">💖 태희맛집 (저장됨)</span>
             </label>
             <label class="star-label">
               <input type="checkbox" class="star-check" value="2" checked />
@@ -66,6 +69,11 @@
               <input type="checkbox" class="star-check" value="1" checked />
               <span class="star-badge star-1">★</span>
               <span>1스타</span>
+            </label>
+            <label class="star-label">
+              <input type="checkbox" class="star-check" value="3" checked />
+              <span class="star-badge star-3">★★★</span>
+              <span>3스타</span>
             </label>
           </div>
         </div>
@@ -122,17 +130,7 @@
                 <span class="tier-chip black">⚫ 흑수저</span>
               </label>
             </div>
-            <!-- Bakery Filter -->
-          <div class="filter-section">
-            <label class="filter-label">🥐 천하제빵 베이커리</label>
-            <div class="filter-group">
-              <label class="checkbox-label" style="background:#fff; border:1px solid #e0e0e0; padding:10px; border-radius:12px; width:100%; display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom:0">
-                <span style="font-weight:600; color:#8d5524">🥐 방송 출연 빵집 보기</span>
-                <input type="checkbox" class="bakery-check" checked style="width:18px; height:18px" />
-              </label>
-            </div>
           </div>
-        </div>
         </div>
 
         <!-- Result Count -->
@@ -166,10 +164,12 @@
           </div>
           <div class="legend-divider"></div>
           <div class="legend-item">
-            <span class="legend-bakery">🥐</span> <strong>천하제빵</strong> 베이커리
+            <span class="legend-bakery">🥐</span> 방송 출연 빵집
+          </div>
+          <div class="legend-item">
+            <span class="legend-taehee">💖</span> 태희맛집
           </div>
         </div>
-
       </div>
 
       <!-- LIST VIEW -->
@@ -275,6 +275,7 @@
   <script src="data.js"></script>
   <script src="data_bbr.js"></script>
   <script src="data_bakery.js"></script>
+  <script src="data_taehee.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
